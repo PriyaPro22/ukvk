@@ -192,48 +192,41 @@ body{
 </div>
 
 <script>
-function openLogin(){
-  document.getElementById("loginModal").classList.remove("hidden");
-}
-function closeLogin(){
-  document.getElementById("loginModal").classList.add("hidden");
-}
-
-/* LOCATION */
-function fetchLocation(){
-  if(!navigator.geolocation) return;
-  navigator.geolocation.getCurrentPosition(async pos=>{
-    const r=await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`);
-    const d=await r.json();
-    document.getElementById("locationText").textContent =
-      d.address.city || d.address.town || "Your Location";
-  });
-}
-
-/* LOGIN */
 async function submitLogin(){
-  const emailOrPhone=document.getElementById("emailOrPhone").value.trim();
-  const password=document.getElementById("password").value.trim();
+  const emailOrPhone = document.getElementById("emailOrPhone").value.trim();
+  const password = document.getElementById("password").value.trim();
 
-  if(!emailOrPhone||!password){
+  if(!emailOrPhone || !password){
     alert("Fill all fields");
     return;
   }
 
   try{
-    const res=await fetch("https://ukvk-backend.onrender.com/login",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({emailOrPhone,password})
+    const res = await fetch("https://ukvk-backend.onrender.com/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ emailOrPhone, password })
     });
-    const data=await res.json();
-    alert(data.message||"Login success");
+
+    if(!res.ok){
+      const text = await res.text();
+      alert("Login failed: " + text);
+      return;
+    }
+
+    const data = await res.json();
+    alert(data.message || "Login success");
     closeLogin();
-  }catch{
-    alert("Backend not running");
+
+  }catch(err){
+    console.error(err);
+    alert("API error / backend issue");
   }
 }
 </script>
 
 </body>
 </html>
+
