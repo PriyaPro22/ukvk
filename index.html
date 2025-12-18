@@ -34,7 +34,6 @@ body{
 <div class="glass rounded-b-[2.5rem] p-6">
   <div class="flex justify-between items-center">
 
-    <!-- PROFILE + LOCATION -->
     <div class="flex items-center gap-3">
       <div onclick="openLogin()"
            class="w-11 h-11 rounded-full border-2 border-yellow-400 bg-gray-800 cursor-pointer"></div>
@@ -54,7 +53,6 @@ body{
     </span>
   </div>
 
-  <!-- SEARCH BAR -->
   <div class="mt-4 glass px-4 py-2 rounded-full flex items-center gap-2">
     <span class="material-symbols-outlined text-gray-400">search</span>
     <input class="bg-transparent outline-none text-sm w-full placeholder-gray-500"
@@ -86,7 +84,7 @@ body{
   </button>
 </div>
 
-<!-- SERVICES (MODERN ICONS – FINAL) -->
+<!-- SERVICES -->
 <div class="px-6 mt-8">
   <div class="flex justify-between mb-4">
     <h3 class="font-bold text-lg">Select Service</h3>
@@ -94,76 +92,33 @@ body{
   </div>
 
   <div class="grid grid-cols-3 gap-4 text-sm">
-
     <div class="glass p-4 rounded-2xl flex flex-col items-center gap-2">
-      <div class="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center">
-        <span class="material-symbols-outlined text-blue-400">ac_unit</span>
-      </div>
+      <span class="material-symbols-outlined text-blue-400">ac_unit</span>
       <span>AC Repair</span>
     </div>
-
     <div class="glass p-4 rounded-2xl flex flex-col items-center gap-2">
-      <div class="w-10 h-10 rounded-full bg-orange-500/20 flex items-center justify-center">
-        <span class="material-symbols-outlined text-orange-400">mode_fan</span>
-      </div>
+      <span class="material-symbols-outlined text-orange-400">mode_fan</span>
       <span>Fan</span>
     </div>
-
     <div class="glass p-4 rounded-2xl flex flex-col items-center gap-2">
-      <div class="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center">
-        <span class="material-symbols-outlined text-purple-400">tv</span>
-      </div>
+      <span class="material-symbols-outlined text-purple-400">tv</span>
       <span>Smart TV</span>
     </div>
-
     <div class="glass p-4 rounded-2xl flex flex-col items-center gap-2">
-      <div class="w-10 h-10 rounded-full bg-teal-500/20 flex items-center justify-center">
-        <span class="material-symbols-outlined text-teal-400">kitchen</span>
-      </div>
+      <span class="material-symbols-outlined text-teal-400">kitchen</span>
       <span>Fridge</span>
     </div>
-
     <div class="glass p-4 rounded-2xl flex flex-col items-center gap-2">
-      <div class="w-10 h-10 rounded-full bg-pink-500/20 flex items-center justify-center">
-        <span class="material-symbols-outlined text-pink-400">smartphone</span>
-      </div>
+      <span class="material-symbols-outlined text-pink-400">smartphone</span>
       <span>Mobile</span>
     </div>
-
     <div class="glass p-4 rounded-2xl flex flex-col items-center gap-2">
-      <div class="w-10 h-10 rounded-full bg-indigo-500/20 flex items-center justify-center">
-        <span class="material-symbols-outlined text-indigo-400">laptop_mac</span>
-      </div>
+      <span class="material-symbols-outlined text-indigo-400">laptop_mac</span>
       <span>Laptop</span>
     </div>
-
   </div>
 </div>
 
-</div>
-
-<!-- FLOATING SEARCH -->
-<div class="fixed bottom-20 left-1/2 -translate-x-1/2 z-50">
-  <div class="w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center shadow-2xl">
-    <span class="material-symbols-outlined text-black text-3xl">search</span>
-  </div>
-</div>
-
-<!-- BOTTOM NAV -->
-<div class="fixed bottom-0 left-0 w-full glass px-8 py-4 flex justify-between items-center z-40">
-  <div class="text-yellow-400 text-center text-xs">
-    <span class="material-symbols-outlined">home</span><br/>Home
-  </div>
-  <div class="text-gray-400 text-center text-xs">
-    <span class="material-symbols-outlined">grid_view</span><br/>Services
-  </div>
-  <div class="w-16"></div>
-  <div class="text-gray-400 text-center text-xs">
-    <span class="material-symbols-outlined">shopping_bag</span><br/>Cart
-  </div>
-  <div class="text-gray-400 text-center text-xs">
-    <span class="material-symbols-outlined">person</span><br/>Profile
-  </div>
 </div>
 
 <!-- LOGIN MODAL -->
@@ -199,37 +154,33 @@ function closeLogin(){
   document.getElementById("loginModal").classList.add("hidden");
 }
 
-/* LOCATION */
-function fetchLocation(){
-  if(!navigator.geolocation) return;
-  navigator.geolocation.getCurrentPosition(async pos=>{
-    const r=await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`);
-    const d=await r.json();
-    document.getElementById("locationText").textContent =
-      d.address.city || d.address.town || "Your Location";
-  });
-}
-
-/* LOGIN */
 async function submitLogin(){
-  const emailOrPhone=document.getElementById("emailOrPhone").value.trim();
-  const password=document.getElementById("password").value.trim();
+  const emailOrPhone = document.getElementById("emailOrPhone").value.trim();
+  const password = document.getElementById("password").value.trim();
 
-  if(!emailOrPhone||!password){
+  if(!emailOrPhone || !password){
     alert("Fill all fields");
     return;
   }
 
   try{
-    const res=await fetch("http://localhost:3000/login",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({emailOrPhone,password})
+    const res = await fetch("https://ukvk-backend.onrender.com//login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ emailOrPhone, password })
     });
-    const data=await res.json();
-    alert(data.message||"Login success");
+
+    const data = await res.json();
+
+    if(!res.ok){
+      alert(data.message || "Login failed");
+      return;
+    }
+
+    alert(data.message || "Login successful");
     closeLogin();
-  }catch{
+
+  }catch(err){
     alert("Backend not running");
   }
 }
